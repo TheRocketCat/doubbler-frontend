@@ -1,4 +1,5 @@
-import type { MetaFunction } from "@remix-run/node";
+import { type MetaFunction,json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -7,35 +8,31 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function loader() {
+	const res= await fetch('http://localhost:3003/store/offers')
+	return json(await res.json())
+}
+
 export default function Index() {
+	const json = useLoaderData<typeof loader>()
+	console.log(json)
+
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+	<>
+		<h1>Offers</h1> 
+		{json.map((offer) => (
+			<div style={{"margin":"10px","backgroundColor":"blue","padding":"10px"}}>
+				<h1>{offer._name}</h1>
+				<h2>Price: {offer._doublonerPrice}</h2>
+				<button>Buy</button>
+			</div>
+		) )}
+	</>
   );
+}
+
+function Buy(){
+	// TODO : Add buy logic
+	// here it should generate another buy kwikk button?
+	// probably not even possible, since kwikk takes payments in real cash
 }
