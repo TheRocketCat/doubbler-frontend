@@ -1,7 +1,8 @@
 import {Form} from "@remix-run/react"
 //import {redirect} from "@remix-run/node"
-import {useNavigate,redirect} from "react-router-dom"
 import React from "react"
+import {useNavigate,redirect} from "react-router-dom"
+import {Link} from "@remix-run/react"
 
 export async function action({request}) {
 	const body = await request.formData()
@@ -37,9 +38,9 @@ export async function action({request}) {
 }
 
 export default function Login() {
-	const [user, setUser] = React.useState("")
-	const [message, setMessage] = React.useState("user")
+	const [user, setUser] = React.useState("user")
 	const [password, setPassword] = React.useState("password")
+	const [message, setMessage] = React.useState("")
 
 	const navigate = useNavigate()
 
@@ -77,6 +78,7 @@ export default function Login() {
 					<input type="password" name="password" value={password} onChange={event=>setPassword(event.target.value)}/>
 					<button onClick={login}>Login</button>
 				<p>{message}</p>
+				<Link to="/register">Register / First Time Login</Link>
 			</div>
 	)
 }

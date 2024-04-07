@@ -1,5 +1,6 @@
 import { type MetaFunction,json,LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import {useEffect,useState} from "react"
 
 export const meta: MetaFunction = () => {
   return [
@@ -39,10 +40,40 @@ export async function loader({request}:LoaderFunctionArgs) {
 export default function Index() {
 	const json = useLoaderData<typeof loader>()
 
+	const [doubloner, setDoubloner] = useState(json.doubloner)
+	const [message, setMessage] = useState("")
+
 	console.log(json)
+	async function buy(id:number){
+			// TODO : Add buy logic
+			// here it should generate another buy kwikk button?
+			// probably not even possible, since kwikk takes payments in real cash
+			const accessToken=window.localStorage.getItem("access_token")
+			
+			const res=await fetch(`http://localhost:3003/store/buy/${id}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": "Bearer " + accessToken
+				}
+			})
+			console.log(res)
+			if(res.ok){
+				const json=await res.json()
+				if(json.error){
+					setMessage(json.error)
+					return
+				}
+
+				setMessage("purchase successful")
+				setDoubloner(json.doubloner)
+
+			}
+	}
   return (
 	<div>
-		<p>doubloner: {json.doubloner}</p>
+		<p>doubloner: {doubloner}</p>
+		<p>message: {message}</p>
 		<div>
 			<h1>Offers</h1> 
 			{json.offers.map((offer) => (
@@ -57,9 +88,3 @@ export default function Index() {
   );
 }
 
-function buy(name){
-	console.log(name)
-	// TODO : Add buy logic
-	// here it should generate another buy kwikk button?
-	// probably not even possible, since kwikk takes payments in real cash
-}
