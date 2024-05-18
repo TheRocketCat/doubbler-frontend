@@ -18,6 +18,11 @@ export async function loader({request}:LoaderFunctionArgs) {
 			"Authorization": "Bearer " + auth
 		}
 	})
+	const codes= await fetch('http://localhost:3003/store/codes',{
+		headers: {
+			"Authorization": "Bearer " + auth
+		}
+	})
 	const doubl= await fetch('http://localhost:3003/user/doubloner',{
 		headers: {
 			"Authorization": "Bearer " + auth
@@ -26,6 +31,9 @@ export async function loader({request}:LoaderFunctionArgs) {
 	if(!res.ok){
 		throw new Error("Failed to fetch offers")
 	}
+	if(!codes.ok){
+		throw new Error("Failed to codes")
+	}
 	if(!doubl.ok){
 		console.log(doubl)
 		throw new Error("Failed to fetch doubloner")
@@ -33,17 +41,18 @@ export async function loader({request}:LoaderFunctionArgs) {
 
 	return json({
 		offers: await res.json(),
-		doubloner: (await doubl.json()).doubloner
+		doubloner: (await doubl.json()).doubloner,
+		codes: await codes.json()
 	})
 }
 
 export default function Index() {
-	const json = useLoaderData<typeof loader>()
+	const data = useLoaderData<typeof loader>()
 
-	const [doubloner, setDoubloner] = useState(json.doubloner)
+	const [doubloner, setDoubloner] = useState(data.doubloner)
 	const [message, setMessage] = useState("")
+	const [codes, setCodes] = useState([...data.codes])
 
-	console.log(json)
 	async function buy(id:number){
 			// TODO : Add buy logic
 			// here it should generate another buy kwikk button?
@@ -57,7 +66,6 @@ export default function Index() {
 					"Authorization": "Bearer " + accessToken
 				}
 			})
-			console.log(res)
 			if(res.ok){
 				const json=await res.json()
 				if(json.error){
@@ -67,22 +75,40 @@ export default function Index() {
 
 				setMessage("purchase successful")
 				setDoubloner(json.doubloner)
-
+				console.log(json)
+				setCodes([...codes,json.code])
 			}
 	}
   return (
-	<div>
+	<div className="container m-auto">
 		<p>doubloner: {doubloner}</p>
 		<p>message: {message}</p>
 		<div>
-			<h1>Offers</h1> 
-			{json.offers.map((offer) => (
-				<div style={{"margin":"10px","backgroundColor":"blue","padding":"10px"}}>
-					<h1>{offer._name}</h1>
-					<h2>Price: {offer._doublonerPrice}</h2>
-					<button onClick={()=>buy(offer.id)}>Buy</button>
-				</div>
-			) )}
+			<h2>My Codes</h2>
+			<div>
+				{codes.map((code) => (
+					<div>
+						<p>{code.code}</p>
+					</div>
+				)
+				)}
+			</div>
+		</div>
+		<div>
+			<h1 className="text-center text-2xl">Offers</h1> 
+			<div className="grid grid-cols-3 gap-4">
+				{data.offers.map((offer) => (
+					<div className="bg-pink-500 p-5">
+						<h1>{offer._name}</h1>
+						<h2>Price: {offer._doublonerPrice}</h2>
+						<button onClick={()=>buy(offer.id)}
+							className="btn btn-blue"
+						>
+							Buy
+						</button>
+					</div>
+				) )}
+			</div>
 		</div>
 	</div>
   );
