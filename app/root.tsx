@@ -26,8 +26,11 @@ export default function App() {
         <Links />
       </head>
       <body>
-		<header>
+		<header className="[&_a]:m-5 h-20">
 			<Link to="/login">login</Link>
+			<Link to="/register">register</Link>
+			<Link to="/admin">admin</Link>
+			<Link to="/fake-store">Fake Store</Link>
 		</header>
         <Outlet />
         <ScrollRestoration />

@@ -70,8 +70,8 @@ export default function Login() {
 	}
 
 	return (
-			<div>
-				<h1>Login</h1>
+			<div className="w-[300px] m-auto [&_*]:block">
+				<h1 className="text-2xl">Login</h1>
 					<label>Username</label>
 					<input type="text" name="username" value={user} onChange={event => setUser(event.target.value)}/>
 					<label>Password</label>
