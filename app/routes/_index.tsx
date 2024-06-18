@@ -12,6 +12,7 @@ export const meta: MetaFunction = () => {
 export async function loader({request}:LoaderFunctionArgs) {
 	const cookie= request.headers.get("Cookie")
 	const auth= cookie?.split(";").find((c) => c.trim().startsWith("access_token=")).split("=")[1]
+	console.log(auth)
 
 	const res= await fetch('http://localhost:3003/store/offers',{
 		headers: {

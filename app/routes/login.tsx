@@ -61,6 +61,7 @@ export default function Login() {
 			if(!json.access_token){
 				throw new Error("No access token")
 			}
+			window.localStorage.removeItem("access_token")
 			window.localStorage.setItem("access_token", json.access_token)
 			document.cookie = `access_token=${json.access_token}`
 			//return redirect("/")

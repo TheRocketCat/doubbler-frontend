@@ -27,6 +27,7 @@ export default function App() {
       </head>
       <body>
 		<header className="[&_a]:m-5 h-20">
+			<Link to="/">Home</Link>
 			<Link to="/login">login</Link>
 			<Link to="/register">register</Link>
 			<Link to="/admin">admin</Link>
